@@ -209,9 +209,9 @@ final class SubresourceDataProvider implements SubresourceDataProviderInterface
             // Instead we use a direct identifier equality clause, to speed things up when dealing with large tables.
             // We may do so if there is no more recursion levels from here, and if relation allows it.
             $association = $classMetadata->hasAssociation($previousAssociationProperty) ? $classMetadata->getAssociationMapping($previousAssociationProperty) : [];
-            $oneToOneBidirectional = isset($association['inversedBy']) && ClassMetadataInfo::ONE_TO_ONE === $association['type'];
+            $toOneBidirectional = isset($association['inversedBy']) && (ClassMetadataInfo::ONE_TO_ONE === $association['type'] || ClassMetadataInfo::MANY_TO_ONE === $association['type']);
             $oneToManyBidirectional = isset($association['mappedBy']) && ClassMetadataInfo::ONE_TO_MANY === $association['type'];
-            if ($isLeaf && $oneToOneBidirectional) {
+            if ($isLeaf && $toOneBidirectional) {
                 $joinAlias = $queryNameGenerator->generateJoinAlias($association['inversedBy']);
 
                 return $previousQueryBuilder->innerJoin("$previousAlias.{$association['inversedBy']}", $joinAlias)
